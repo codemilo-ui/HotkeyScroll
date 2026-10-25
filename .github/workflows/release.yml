@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Build & Publish Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Tagged Commit
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract Version from Tag
+        id: get_version
+        shell: pwsh
+        run: |
+          $rawTag = "${{ github.ref_name }}"
+          $version = $rawTag.TrimStart('v', 'V')
+          Write-Host "Tag: $rawTag -> Version: $version"
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          echo "TAG_NAME=$rawTag" >> $env:GITHUB_OUTPUT
+
+      - name: Restore Dependencies
+        run: dotnet restore RobloxHotbarScroll.sln
+
+      - name: Run Test Suite
+        run: dotnet test RobloxHotbarScroll.sln -c Release --no-restore --verbosity normal
+
+      - name: Publish Windows x64 Application
+        run: >
+          dotnet publish RobloxHotbarScroll/RobloxHotbarScroll.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=none
+          -p:DebugSymbols=false
+          -p:Version=${{ steps.get_version.outputs.VERSION }}
+          -o ./publish_dist
+
+      - name: Verify and Clean Published Distribution
+        shell: pwsh
+        run: |
+          # Remove any debug/PDB symbols from distribution
+          Get-ChildItem -Path ./publish_dist -Filter "*.pdb" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+
+          # Verify standalone executable was created
+          $exePath = "./publish_dist/HotkeyScroll.exe"
+          if (!(Test-Path $exePath)) {
+            Write-Error "CRITICAL: HotkeyScroll.exe was not found in ./publish_dist!"
+            exit 1
+          }
+
+          Write-Host "Verified production build:"
+          Get-Item $exePath | Format-List FullName, Length
+
+      - name: Create Distribution ZIP Package
+        shell: pwsh
+        run: |
+          $zipName = "HotkeyScroll-${{ steps.get_version.outputs.TAG_NAME }}-win-x64.zip"
+          Compress-Archive -Path ./publish_dist/* -DestinationPath $zipName -Force
+          Write-Host "Distribution archive ready: $zipName"
+          Get-Item $zipName | Format-List FullName, Length
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "HotkeyScroll ${{ steps.get_version.outputs.TAG_NAME }}"
+          tag_name: ${{ steps.get_version.outputs.TAG_NAME }}
+          files: HotkeyScroll-${{ steps.get_version.outputs.TAG_NAME }}-win-x64.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

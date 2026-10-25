@@ -1,0 +1,934 @@
+<Window x:Class="RobloxHotbarScroll.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:components="clr-namespace:RobloxHotbarScroll.Views.Components"
+        mc:Ignorable="d"
+        Title="HotkeyScroll by CodeMilo"
+        Height="730" Width="860"
+        MinHeight="600" MinWidth="760"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <!-- Window Startup Smooth Fade/Scale/Slide Animation -->
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="RootBorder"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0.0" To="1.0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="RootScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     From="0.97" To="1.0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="RootScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     From="0.97" To="1.0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="RootTranslate"
+                                     Storyboard.TargetProperty="Y"
+                                     From="12.0" To="0.0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <!-- Outer Window Chrome with Dark Violet Glow Shadow -->
+    <Border x:Name="RootBorder"
+            Background="{StaticResource BrushBgDeep}"
+            BorderBrush="{StaticResource BrushBorderSubtle}"
+            BorderThickness="1"
+            CornerRadius="14"
+            Opacity="0">
+        <Border.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="RootScale" CenterX="430" CenterY="360" ScaleX="0.97" ScaleY="0.97" />
+                <TranslateTransform x:Name="RootTranslate" Y="12" />
+            </TransformGroup>
+        </Border.RenderTransform>
+        <Border.Effect>
+            <DropShadowEffect Color="#8B5CF6" BlurRadius="28" Opacity="0.25" ShadowDepth="4" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Title Bar -->
+                <RowDefinition Height="50" />
+                <!-- Navigation Tabs -->
+                <RowDefinition Height="46" />
+                <!-- Main Content Area -->
+                <RowDefinition Height="*" />
+                <!-- Bottom Status Bar -->
+                <RowDefinition Height="32" />
+            </Grid.RowDefinitions>
+
+            <!-- ================= TITLE BAR ================= -->
+            <Border Grid.Row="0"
+                    Background="{StaticResource BrushBgDark}"
+                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="14,14,0,0"
+                    MouseDown="TitleBar_MouseDown">
+                <Grid Margin="18,0,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- App Icon, Name & Subtitle -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="30" Height="30"
+                                Background="{StaticResource BrushAccentPurple}"
+                                CornerRadius="8"
+                                Margin="0,0,12,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="10" Opacity="0.5" ShadowDepth="0" />
+                            </Border.Effect>
+                            <Path Data="{StaticResource IconScroll}"
+                                  Fill="#FFFFFF"
+                                  Width="16" Height="16"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="HotkeyScroll"
+                                           FontWeight="Black"
+                                           FontSize="14"
+                                           Foreground="{StaticResource BrushTextPrimary}" />
+                                <Border Background="{StaticResource BrushBgElevated}"
+                                        BorderBrush="{StaticResource BrushBorderHighlight}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="6,1"
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="v1.2.0"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="by CodeMilo"
+                                       FontSize="10"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource BrushTextMuted}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Window Control Buttons -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource WindowMinButtonStyle}"
+                                ToolTip="Minimize to Tray"
+                                Click="MinimizeToTray_Click"
+                                Margin="0,0,4,0">
+                            <Path Data="{StaticResource IconArrowLeft}"
+                                  Fill="{StaticResource BrushTextSecondary}"
+                                  Width="10" Height="10"
+                                  Stretch="Uniform" />
+                        </Button>
+                        <Button Style="{StaticResource WindowMinButtonStyle}"
+                                ToolTip="Minimize"
+                                Click="Minimize_Click" />
+                        <Button Style="{StaticResource WindowCloseButtonStyle}"
+                                ToolTip="Close"
+                                Click="Close_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ================= NAVIGATION TABS ================= -->
+            <Border Grid.Row="1"
+                    Background="{StaticResource BrushBgDark}"
+                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="18,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <RadioButton x:Name="TabDashboard" Content="Dashboard" Style="{StaticResource NavTabStyle}" IsChecked="True" Checked="NavTab_Checked" />
+                        <RadioButton x:Name="TabSettings" Content="Settings" Style="{StaticResource NavTabStyle}" Checked="NavTab_Checked" />
+                        <RadioButton x:Name="TabLogs" Content="Logs &amp; Debug" Style="{StaticResource NavTabStyle}" Checked="NavTab_Checked" />
+                        <RadioButton x:Name="TabAbout" Content="About" Style="{StaticResource NavTabStyle}" Checked="NavTab_Checked" />
+                    </StackPanel>
+
+                    <!-- Right Header Status Indicator Badge -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Border CornerRadius="12"
+                                Padding="12,5"
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushBorderSubtle}"
+                                BorderThickness="1">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8"
+                                         Fill="{Binding StatusBadgeColor}"
+                                         Margin="0,0,7,0" />
+                                <TextBlock Text="{Binding StatusBadgeText}"
+                                           FontWeight="Bold"
+                                           FontSize="11"
+                                           Foreground="{StaticResource BrushTextPrimary}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ================= MAIN CONTENT AREA ================= -->
+            <Grid Grid.Row="2" Margin="20,12,20,16">
+                <Grid.RowDefinitions>
+                    <!-- Update Available Banner (if update ready) -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Tab Views -->
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Update Available Notification Banner -->
+                <Border Grid.Row="0"
+                        x:Name="UpdateNotificationBanner"
+                        Visibility="{Binding HasUpdateNotification, Converter={StaticResource BoolToVis}}"
+                        Background="#25163D"
+                        BorderBrush="#8B5CF6"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="16,10"
+                        Margin="0,0,0,12">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#8B5CF6" BlurRadius="18" Opacity="0.35" ShadowDepth="0" />
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="30" Height="30" CornerRadius="8" Background="#381D63" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <TextBlock Text="✦" Foreground="#A855F7" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="✦ Update Available" FontWeight="Bold" FontSize="11" Foreground="#A855F7" Margin="0,0,0,2" />
+                            <TextBlock Text="{Binding AvailableUpdateTitle}" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="View Update" Command="{Binding ViewUpdateCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" Padding="14,6" Margin="0,0,8,0" />
+                            <Button Content="Later" Command="{Binding DismissUpdateNotificationCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}" Padding="10,6" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ================= TAB CONTENT PANELS ================= -->
+                <Grid Grid.Row="1">
+
+                    <!-- 1. DASHBOARD VIEW -->
+                    <Grid x:Name="ViewDashboard" Visibility="Visible" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TranslateTransform Y="0" />
+                        </Grid.RenderTransform>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Hook Error Banner (Only shown if hook fails) -->
+                        <Border Grid.Row="0"
+                                Visibility="{Binding HasHookError, Converter={StaticResource BoolToVis}}"
+                                Background="#33EF4444"
+                                BorderBrush="{StaticResource BrushAccentRed}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="16,12"
+                                Margin="0,0,0,14">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Input Hook Offline" FontWeight="Bold" Foreground="#EF4444" FontSize="13" />
+                                    <TextBlock Text="Windows input monitoring could not be started. Remapping is currently unavailable."
+                                               FontSize="11" Foreground="{StaticResource BrushTextPrimary}" Margin="0,2,0,0" />
+                                    <TextBlock Text="{Binding HookErrorMessage}" FontSize="10" Foreground="{StaticResource BrushTextMuted}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="Retry"
+                                            Command="{Binding RetryHookCommand}"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Padding="14,6"
+                                            Margin="0,0,8,0" />
+                                    <Button Content="Open Logs"
+                                            Command="{Binding OpenLogsFolderCommand}"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Padding="14,6" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Hero Remapper Card -->
+                        <Border Grid.Row="1"
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushBorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="14"
+                                Padding="22,18"
+                                Margin="0,0,0,14">
+                            <StackPanel HorizontalAlignment="Center">
+                                <!-- Remapper State Header with Smooth Animation -->
+                                <Border x:Name="StatusBadgeBorder"
+                                        Background="{StaticResource BrushBgElevated}"
+                                        BorderBrush="{Binding StatusBadgeColor}"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="14,5"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,0,0,8"
+                                        RenderTransformOrigin="0.5,0.5">
+                                    <Border.RenderTransform>
+                                        <ScaleTransform x:Name="StatusScale" ScaleX="1.0" ScaleY="1.0" />
+                                    </Border.RenderTransform>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Fill="{Binding StatusBadgeColor}" Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding StatusTitle}"
+                                                   FontSize="12"
+                                                   FontWeight="Black"
+                                                   Foreground="{Binding StatusBadgeColor}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Big Slot Display: SLOT 3 (Animated) -->
+                                <StackPanel x:Name="SlotNumberContainer"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,0,0,4"
+                                            RenderTransformOrigin="0.5,0.5">
+                                    <StackPanel.RenderTransform>
+                                        <TranslateTransform x:Name="SlotTranslate" Y="0" />
+                                    </StackPanel.RenderTransform>
+                                    <TextBlock Text="{Binding CurrentSlotText}"
+                                               FontSize="46"
+                                               FontWeight="Black"
+                                               Foreground="{StaticResource BrushTextPrimary}" />
+                                    <Border Background="{StaticResource BrushBgElevated}"
+                                            BorderBrush="{StaticResource BrushAccentPurple}"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Padding="8,4"
+                                            Margin="14,0,0,0"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding CurrentKeyText}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Remapped Number Row Visualizer [1]..[0] -->
+                                <components:HotbarDisplay Margin="0,6,0,10" />
+
+                                <!-- Wheel Direction Hints -->
+                                <Border Background="{StaticResource BrushBgDark}"
+                                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                                        BorderThickness="1"
+                                        CornerRadius="20"
+                                        Padding="16,6"
+                                        HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding PrevSlotHint}"
+                                                   FontSize="11"
+                                                   FontWeight="Medium"
+                                                   Foreground="{StaticResource BrushTextSecondary}"
+                                                   Margin="0,0,14,0" />
+                                        <TextBlock Text="•" Foreground="{StaticResource BrushBorderHighlight}" Margin="0,0,14,0" />
+                                        <TextBlock Text="{Binding NextSlotHint}"
+                                                   FontSize="11"
+                                                   FontWeight="Medium"
+                                                   Foreground="{StaticResource BrushTextSecondary}" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Live Last Input & Quick Cards Row -->
+                        <Grid Grid.Row="2" Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Live Last Input Activity Card -->
+                            <Border Grid.Column="0"
+                                    Background="{StaticResource BrushBgCard}"
+                                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="16">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,10">
+                                        <TextBlock Text="LAST INPUT ACTIVITY"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                        <TextBlock Text="{Binding LastInput.FormattedTimestamp}"
+                                                   FontSize="10"
+                                                   Foreground="{StaticResource BrushTextMuted}"
+                                                   HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,2">
+                                        <TextBlock Text="Action Trigger:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" />
+                                        <TextBlock Text="{Binding LastInput.ActionName}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <Grid Margin="0,2">
+                                        <TextBlock Text="Slot Transition:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" />
+                                        <TextBlock Text="{Binding LastInput.TransitionText}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushAccentPurpleLight}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <Grid Margin="0,2">
+                                        <TextBlock Text="Keyboard Sent:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" />
+                                        <TextBlock Text="{Binding LastInput.SentKey}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <Grid Margin="0,2">
+                                        <TextBlock Text="Result:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" />
+                                        <TextBlock Text="{Binding LastInput.Result}" FontSize="11" FontWeight="Medium" Foreground="{StaticResource BrushTextMuted}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Quick Remapper Toggles Card -->
+                            <Border Grid.Column="2"
+                                    Background="{StaticResource BrushBgCard}"
+                                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="16">
+                                <StackPanel VerticalAlignment="Center">
+                                    <Grid Margin="0,4">
+                                        <TextBlock Text="Roblox Only" FontSize="11" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding RobloxOnly, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <Grid Margin="0,4">
+                                        <TextBlock Text="Wrap-Around" FontSize="11" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding WrapAround, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <Grid Margin="0,4">
+                                        <TextBlock Text="Reverse Wheel" FontSize="11" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding ReverseScroll, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Bottom Master Toggle Button Card -->
+                        <Border Grid.Row="3"
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushBorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Remapper Status Control"
+                                               FontWeight="Bold"
+                                               FontSize="13"
+                                               Foreground="{StaticResource BrushTextPrimary}" />
+                                    <TextBlock Text="Press the global hotkey to pause or resume remapping anytime."
+                                               FontSize="11"
+                                               Foreground="{StaticResource BrushTextSecondary}" />
+                                </StackPanel>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding ToggleActiveCommand}"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Padding="24,10">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding ToggleButtonText}" FontWeight="Bold" FontSize="13" />
+                                        <TextBlock Text="{Binding ToggleButtonHint}" FontWeight="Bold" FontSize="13" Margin="6,0,0,0" Opacity="0.85" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- 2. SETTINGS VIEW (Clean Animated Sections) -->
+                    <ScrollViewer x:Name="ViewSettings" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" RenderTransformOrigin="0.5,0.5">
+                        <ScrollViewer.RenderTransform>
+                            <TranslateTransform Y="0" />
+                        </ScrollViewer.RenderTransform>
+                        <StackPanel>
+                            <!-- Remapping Mechanics Card -->
+                            <Expander Style="{StaticResource ModernExpanderStyle}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="REMAPPING &amp; INPUT MECHANICS" FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Enable Remapping" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding IsRemapperEnabled, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Roblox Only (Remap only when Roblox is focused)" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding RobloxOnly, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Wrap-Around (Slot 10 + Down → 1, Slot 1 + Up → 10)" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding WrapAround, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Reverse Scroll Direction (Up = Next, Down = Prev)" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding ReverseScroll, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Block Mouse Wheel in Roblox" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="Suppresses default camera zoom while switching hotbar slots"
+                                                       FontSize="11" Foreground="{StaticResource BrushTextMuted}" />
+                                        </StackPanel>
+                                        <CheckBox IsChecked="{Binding BlockMouseWheelInRoblox, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Global Hotkey Card -->
+                            <Expander Style="{StaticResource ModernExpanderStyle}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="GLOBAL TOGGLE HOTKEY" FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Hotkey for Active ↕ Paused" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="Works globally even when minimized or inside Roblox"
+                                                       FontSize="11" Foreground="{StaticResource BrushTextMuted}" />
+                                        </StackPanel>
+                                        <TextBox Text="{Binding ToggleHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Width="120"
+                                                 Height="28"
+                                                 Background="{StaticResource BrushBgElevated}"
+                                                 Foreground="{StaticResource BrushAccentPurpleLight}"
+                                                 BorderBrush="{StaticResource BrushBorderHighlight}"
+                                                 BorderThickness="1"
+                                                 FontWeight="Bold"
+                                                 FontSize="12"
+                                                 HorizontalAlignment="Right"
+                                                 VerticalContentAlignment="Center"
+                                                 HorizontalContentAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Startup & System Tray Card -->
+                            <Expander Style="{StaticResource ModernExpanderStyle}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="STARTUP &amp; SYSTEM TRAY" FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Start With Windows" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding StartWithWindows, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Start Minimized to System Tray" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Minimize To Tray on Close" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding MinimizeToTray, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Show Toast Notifications" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding ShowNotifications, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Updates Card -->
+                            <Expander Style="{StaticResource ModernExpanderStyle}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="UPDATES" FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Expander.Header>
+                                <StackPanel>
+                                    <!-- Current Version -->
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Current Version" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding SettingsVM.AppVersionText}"
+                                                   FontWeight="Bold"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource BrushAccentPurpleLight}"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+
+                                    <!-- Status (When up to date or initial or offline error) -->
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Status" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="{Binding SettingsVM.UpdateStatus}"
+                                                       FontSize="11"
+                                                       TextWrapping="Wrap"
+                                                       Foreground="{StaticResource BrushTextMuted}"
+                                                       Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <Button Content="Check for Updates"
+                                                Command="{Binding CheckForUpdatesCommand}"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Padding="14,6"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center" />
+                                    </Grid>
+
+                                    <!-- New Version Available Banner (Only shown when a newer version exists) -->
+                                    <Border Visibility="{Binding SettingsVM.HasUpdate, Converter={StaticResource BoolToVis}}"
+                                            Background="#25163D"
+                                            BorderBrush="#8B5CF6"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="14,10"
+                                            Margin="0,8,0,4">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                                    <TextBlock Text="New Version Available: "
+                                                               FontWeight="Bold"
+                                                               FontSize="12"
+                                                               Foreground="#FFFFFF" />
+                                                    <TextBlock Text="{Binding SettingsVM.NewVersionText}"
+                                                               FontWeight="Bold"
+                                                               FontSize="12"
+                                                               Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                                </StackPanel>
+                                                <TextBlock Text="A newer version of HotkeyScroll is available."
+                                                           FontSize="11"
+                                                           Foreground="{StaticResource BrushTextSecondary}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    Content="{Binding SettingsVM.DownloadButtonText}"
+                                                    Command="{Binding SettingsVM.DownloadUpdateCommand}"
+                                                    Style="{StaticResource PrimaryButtonStyle}"
+                                                    Padding="14,6"
+                                                    VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+
+                                    <Separator Background="{StaticResource BrushBorderSubtle}" Margin="0,8" />
+
+                                    <!-- Automatic Check Toggle -->
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Check for updates automatically" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="Checks GitHub Releases in the background on startup"
+                                                       FontSize="11" Foreground="{StaticResource BrushTextMuted}" />
+                                        </StackPanel>
+                                        <CheckBox IsChecked="{Binding SettingsVM.CheckForUpdatesAutomatically, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <!-- Last Checked Timestamp -->
+                                    <Grid Margin="0,6">
+                                        <TextBlock Text="Last Checked" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding SettingsVM.LastCheckedText}"
+                                                   FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource BrushTextSecondary}"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Accessibility & Diagnostics Card -->
+                            <Expander Style="{StaticResource ModernExpanderStyle}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="ACCESSIBILITY &amp; APPEARANCE" FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Reduced Motion" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="Reduces or disables decorative animations for accessibility"
+                                                       FontSize="11" Foreground="{StaticResource BrushTextMuted}" />
+                                        </StackPanel>
+                                        <CheckBox IsChecked="{Binding ReducedMotion, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+
+                                    <Grid Margin="0,6">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Developer Debug Mode" Foreground="{StaticResource BrushTextPrimary}" />
+                                            <TextBlock Text="Logs every wheel notch, target slot, and key down/up events verbosely"
+                                                       FontSize="11" Foreground="{StaticResource BrushTextMuted}" />
+                                        </StackPanel>
+                                        <CheckBox IsChecked="{Binding DebugMode, Mode=TwoWay}"
+                                                  Style="{StaticResource ToggleSwitchStyle}"
+                                                  HorizontalAlignment="Right" />
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Actions Row -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,16">
+                                <Button Content="Open Logs Folder"
+                                        Command="{Binding OpenLogsFolderCommand}"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="0,0,10,0" />
+                                <Button Content="Clear Feed"
+                                        Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource SecondaryButtonStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- 3. LIVE LOGS & DEBUG VIEW -->
+                    <Grid x:Name="ViewLogs" Visibility="Collapsed" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TranslateTransform Y="0" />
+                        </Grid.RenderTransform>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="LIVE INPUT &amp; SYSTEM LOGS"
+                                           FontWeight="Bold"
+                                           FontSize="12"
+                                           Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                <TextBlock Text="{Binding RecentLogs.Count, StringFormat=' ({0} events)'}"
+                                           Foreground="{StaticResource BrushTextMuted}"
+                                           FontSize="12" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <CheckBox IsChecked="{Binding DebugMode, Mode=TwoWay}"
+                                          Content="Debug Mode"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,16,0"
+                                          Foreground="{StaticResource BrushTextSecondary}" />
+                                <Button Content="Open Logs Folder"
+                                        Command="{Binding OpenLogsFolderCommand}"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="0,0,8,0" />
+                                <Button Content="Clear Logs"
+                                        Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource SecondaryButtonStyle}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Grid.Row="1"
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushBorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding RecentLogs}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,3">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="90" />
+                                                    <ColumnDefinition Width="70" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding FormattedTime}"
+                                                           Foreground="{StaticResource BrushTextMuted}"
+                                                           FontFamily="Consolas"
+                                                           FontSize="11" />
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding Level}"
+                                                           FontWeight="Bold"
+                                                           FontFamily="Consolas"
+                                                           FontSize="11"
+                                                           Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding Message}"
+                                                           Foreground="{StaticResource BrushTextPrimary}"
+                                                           FontFamily="Consolas"
+                                                           FontSize="11" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+
+                    <!-- 4. ABOUT VIEW (Section 27 Minimal CodeMilo Layout) -->
+                    <Grid x:Name="ViewAbout" Visibility="Collapsed" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TranslateTransform Y="0" />
+                        </Grid.RenderTransform>
+                        <Border Style="{StaticResource CardBorderStyle}" VerticalAlignment="Center" Padding="32" MaxWidth="520" HorizontalAlignment="Center">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Border Width="52" Height="52"
+                                        Background="{StaticResource BrushAccentPurple}"
+                                        CornerRadius="14"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,0,0,16">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#8B5CF6" BlurRadius="18" Opacity="0.5" ShadowDepth="0" />
+                                    </Border.Effect>
+                                    <Path Data="{StaticResource IconScroll}"
+                                          Fill="#FFFFFF"
+                                          Width="26" Height="26"
+                                          Stretch="Uniform"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                                </Border>
+
+                                <TextBlock Text="HotkeyScroll"
+                                           FontSize="24"
+                                           FontWeight="Black"
+                                           Foreground="{StaticResource BrushTextPrimary}"
+                                           HorizontalAlignment="Center" />
+
+                                <Border Background="{StaticResource BrushBgElevated}"
+                                        BorderBrush="{StaticResource BrushBorderHighlight}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="10,2"
+                                        Margin="0,6,0,14"
+                                        HorizontalAlignment="Center">
+                                    <TextBlock Text="Version 1.2.0"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource BrushAccentPurpleLight}" />
+                                </Border>
+
+                                <TextBlock Text="A lightweight Windows utility for keyboard-based hotbar navigation."
+                                           Foreground="{StaticResource BrushTextSecondary}"
+                                           FontSize="13"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,10" />
+
+                                <TextBlock Text="Developed by CodeMilo"
+                                           Foreground="{StaticResource BrushAccentPurpleLight}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,24" />
+
+                                <Separator Background="{StaticResource BrushBorderSubtle}" Margin="0,0,0,20" />
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="Check for Updates"
+                                            Command="{Binding CheckForUpdatesCommand}"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Padding="16,8"
+                                            Margin="0,0,10,0" />
+                                    <Button Content="View Logs"
+                                            Command="{Binding AboutVM.ViewLogsCommand}"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Padding="16,8" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- ================= BOTTOM STATUS BAR ================= -->
+            <Border Grid.Row="3"
+                    Background="{StaticResource BrushBgDark}"
+                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,14,14">
+                <Grid Margin="18,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding RobloxStatusText}"
+                                   FontSize="11"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   Margin="0,0,14,0" />
+                        <TextBlock Text="•" Foreground="{StaticResource BrushBorderHighlight}" Margin="0,0,14,0" />
+                        <TextBlock Text="{Binding InputStatusText}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding InputStatusColor}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="CodeMilo"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushTextMuted}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Floating Animated Toast Notifications Container -->
+            <components:ToastOverlay Grid.Row="0" Grid.RowSpan="4"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom"
+                                     Margin="0,0,16,40"
+                                     IsHitTestVisible="True" />
+        </Grid>
+    </Border>
+</Window>

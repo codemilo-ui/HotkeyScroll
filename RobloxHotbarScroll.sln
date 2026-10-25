@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxHotbarScroll", "RobloxHotbarScroll\RobloxHotbarScroll.csproj", "{582A107D-AF33-430C-9547-A467D821FD3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxHotbarScroll.Tests", "RobloxHotbarScroll.Tests\RobloxHotbarScroll.Tests.csproj", "{DC16EF64-0A9F-4171-A60F-EC3555B20490}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{582A107D-AF33-430C-9547-A467D821FD3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{582A107D-AF33-430C-9547-A467D821FD3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{582A107D-AF33-430C-9547-A467D821FD3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{582A107D-AF33-430C-9547-A467D821FD3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC16EF64-0A9F-4171-A60F-EC3555B20490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC16EF64-0A9F-4171-A60F-EC3555B20490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC16EF64-0A9F-4171-A60F-EC3555B20490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC16EF64-0A9F-4171-A60F-EC3555B20490}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
