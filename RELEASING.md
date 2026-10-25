@@ -13,21 +13,22 @@ This document outlines the workflow for developing changes and publishing offici
 
 ---
 
-## 2. Standard Development Workflow
+## 2. Standard Development Workflow (Pushing Source Code)
 
-For normal bug fixes, performance improvements, or UI refinements:
+Normal development pushes **ONLY** push source code and run verification tests.
+They **NEVER** create a release, tag, or upload binaries.
 
 ```bash
-# 1. Check current status
+# 1. Check working tree status
 git status
 
 # 2. Stage changes
 git add .
 
 # 3. Commit with a clear, descriptive message
-git commit -m "Describe change"
+git commit -m "Describe changes"
 
-# 4. Push to the main branch
+# 4. Push source code to main branch
 git push origin main
 ```
 
@@ -39,73 +40,64 @@ git push origin main
 
 ---
 
-## 3. Publishing an Official Release
+## 3. Manual Release Publishing Workflow
 
-HotkeyScroll uses **Semantic Versioning** (`MAJOR.MINOR.PATCH`):
-- `1.0.0`
-- `1.0.1`
-- `1.1.0`
-- `2.0.0`
-
-When you are ready to publish a new public release:
+Releases are published **only when you manually trigger them** in GitHub Actions.
+Nothing is automatically released without your explicit command.
 
 ### Step 1: Update the Version in Project Configuration
-Open `RobloxHotbarScroll/RobloxHotbarScroll.csproj` and update `<Version>`:
+Open `RobloxHotbarScroll/RobloxHotbarScroll.csproj` and set the desired version:
 
 ```xml
 <PropertyGroup>
   ...
   <!-- Versioning & Metadata -->
-  <Version>1.2.1</Version>
+  <Version>1.2.0</Version>
   <AssemblyVersion>$(Version)</AssemblyVersion>
   <FileVersion>$(Version)</FileVersion>
   ...
 </PropertyGroup>
 ```
 
-> **Note**: Application version, assembly version, file version, and the internal update checker dynamically resolve this version from the compiled assembly. You do not need to edit version strings across multiple files.
+> **Note**: Application version, assembly version, file version, and the internal update checker dynamically resolve this version from the compiled assembly.
 
-### Step 2: Commit the Version Bump
+### Step 2: Commit and Push the Version Update
 ```bash
 git add RobloxHotbarScroll/RobloxHotbarScroll.csproj
-git commit -m "Bump version to v1.2.1"
+git commit -m "Prepare release v1.2.0"
 git push origin main
 ```
 
-### Step 3: Create and Push a Version Tag
-Create a Git tag corresponding to the version (with a leading `v`):
-
-```bash
-# Create local tag
-git tag v1.2.1
-
-# Push tag to GitHub
-git push origin v1.2.1
-```
+### Step 3: Trigger the Manual Release in GitHub Actions
+1. Navigate to your repository: [https://github.com/codemilo-ui/HotkeyScroll](https://github.com/codemilo-ui/HotkeyScroll)
+2. Click on the **Actions** tab.
+3. In the left sidebar, select the **Release** workflow.
+4. Click the **Run workflow** dropdown on the right.
+5. Enter the desired version (for example: `1.2.0`).
+6. Click the green **Run workflow** button.
 
 ---
 
-## 4. Automated Release Pipeline
+## 4. What the Release Workflow Does Automatically
 
-Once the tag `v1.2.1` is pushed:
+When you trigger "Run workflow":
 
-1. **Trigger**: GitHub Actions triggers the **Release** workflow (`.github/workflows/release.yml`).
-2. **Checkout & Test**: Checks out the tagged commit and runs the full test suite. If any test fails, the process stops immediately and no broken release is published.
-3. **Build & Publish**: Builds the self-contained, single-file Windows x64 executable (`HotkeyScroll.exe`) with native libraries included and debug symbols omitted.
-4. **Package**: Compresses the standalone executable into `HotkeyScroll-v1.2.1-win-x64.zip`.
-5. **Create GitHub Release**: Creates the official GitHub Release associated with tag `v1.2.1`, attaches `HotkeyScroll-v1.2.1-win-x64.zip`, and generates release notes automatically.
-6. **Zero Manual Uploads**: You never need to build or manually upload ZIP files to GitHub.
+1. **Verify**: Checks out the code and executes the full unit test suite in Release configuration.
+2. **Build**: Builds and publishes the standalone, single-file Windows x64 executable (`HotkeyScroll.exe`) with native libraries included and debug symbols omitted.
+3. **Package**: Compresses the standalone binary into `HotkeyScroll-v1.2.0-win-x64.zip`.
+4. **Publish**: Creates the official GitHub Release associated with tag `v1.2.0`, attaches `HotkeyScroll-v1.2.0-win-x64.zip`, and automatically generates release notes.
+5. **Zero Manual Uploads**: You never need to build or manually upload ZIP files to GitHub.
 
 ---
 
 ## 5. In-App Update Detection
 
 1. HotkeyScroll runs a lightweight background check against `https://api.github.com/repos/codemilo-ui/HotkeyScroll/releases/latest`.
-2. When users run HotkeyScroll, it detects release `v1.2.1` via semantic comparison (`1.2.1 > 1.2.0`).
+2. When users run HotkeyScroll, it detects new releases via semantic version comparison (`1.2.0 > 1.1.0`).
 3. The app displays:
    ```text
    ✦ Update Available
-   HotkeyScroll v1.2.1 is available.
+   HotkeyScroll v1.2.0 is available.
    [ View Release ]
    ```
 4. Clicking **[ View Release ]** opens the official GitHub Release page in the user's default browser where they can download the clean ZIP.
@@ -113,9 +105,9 @@ Once the tag `v1.2.1` is pushed:
 
 ---
 
-## 6. Local Build Verification Commands
+## 6. Local Build & Run Commands
 
-To verify builds locally at any time:
+You can build and run the application locally at any time. Local binaries are kept in your local directory and excluded from git commits via `.gitignore`:
 
 ### Debug Build
 ```bash
@@ -135,4 +127,9 @@ dotnet test -c Release
 ### Publish Standalone Windows x64 Single-File Executable
 ```bash
 dotnet publish RobloxHotbarScroll/RobloxHotbarScroll.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:DebugSymbols=false -o ./publish/x64
+```
+
+### Run Executable Locally
+```powershell
+Start-Process "./publish/x64/HotkeyScroll.exe"
 ```
