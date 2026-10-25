@@ -119,9 +119,14 @@ dotnet build -c Debug
 dotnet build -c Release
 ```
 
+### Restore Dependencies (win-x64)
+```bash
+dotnet restore RobloxHotbarScroll.sln -r win-x64
+```
+
 ### Run All Unit Tests
 ```bash
-dotnet test -c Release
+dotnet test RobloxHotbarScroll.sln -c Release --no-restore --verbosity normal
 ```
 
 ### Publish Standalone Windows x64 Single-File Executable

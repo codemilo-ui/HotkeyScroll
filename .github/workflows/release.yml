@@ -45,10 +45,10 @@ jobs:
           echo "VERSION=$cleanVer" >> $env:GITHUB_OUTPUT
           echo "TAG_NAME=$tagName" >> $env:GITHUB_OUTPUT
 
-      - name: Restore Dependencies
-        run: dotnet restore RobloxHotbarScroll.sln
+      - name: Restore Dependencies (win-x64)
+        run: dotnet restore RobloxHotbarScroll.sln -r win-x64
 
-      - name: Run Test Suite
+      - name: Run Test Suite (Release)
         run: dotnet test RobloxHotbarScroll.sln -c Release --no-restore --verbosity normal
 
       - name: Publish Windows x64 Application
@@ -56,6 +56,7 @@ jobs:
           dotnet publish RobloxHotbarScroll/RobloxHotbarScroll.csproj
           -c Release
           -r win-x64
+          --no-restore
           --self-contained true
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true

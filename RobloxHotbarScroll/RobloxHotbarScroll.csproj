@@ -12,6 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\app.ico</ApplicationIcon>
     <AssemblyName>HotkeyScroll</AssemblyName>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 
     <!-- Versioning & Metadata -->
     <Version>1.2.0</Version>
